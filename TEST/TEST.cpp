@@ -1,11 +1,13 @@
 #include <avr/io.h>
 #include<util/delay.h>
 #include<stdint.h>
+#include<avr/interrupt.h>
 
 #define ARRAY_SIZE(a) sizeof(a)/sizeof(a[0])
 const uint8_t leds[] = {PD2,PD3,PD4,PD5,PD6};
 
 #define RX PD0
+
 //do uart
 #define FOSC 12000000UL                //czestotliwosc zegara 12MHz
 #define BAUD 9600UL                   //szybkosc transmisji
@@ -36,6 +38,17 @@ void TurnOff()
 //    UDR = a;            //wysłanie danej zwrotnej 
 //}
 
+volatile uint8_t buffer[20];
+volatile uint8_t buf=0;
+volatile uint8_t StrRxFlag=0;
+
+ISR (USART_RX_vect) {
+    buffer[buf]=UDR0;
+//    buf++;
+//    if(buf==RX_MAX) buf=0;
+//    StrRxFlag=1;
+    PORTD ^= (1<<leds[4]);
+}
 //Funkcja do wyświetlenia wartości chara na diodach 
 void show(char sign){
    TurnOff();
@@ -54,7 +67,7 @@ int main()
   }
   DDRD&=~(1<<RX);
     
-//    sei();
+    sei();
 
 //UART ze strony
 USART_Init ( MYUBRR );         //wywolanie inicjalizacji UART
@@ -63,41 +76,40 @@ show(test);
 while (1)
 {
   //błąd ramki
-  if (bit_is_set(UCSR0A, FE0))
-    {
-      PORTD |= (1<<leds[4]);
-      _delay_ms(1000);
-    }    
-  else
-   PORTD&=~(1<<leds[4]);
+//  if (bit_is_set(UCSR0A, FE0))
+//    {
+//      PORTD |= (1<<leds[4]);
+//      _delay_ms(1000);
+//    }    
+//  else
+//   PORTD&=~(1<<leds[4]);
+
    
-  
-  if(bit_is_set(UCSR0A, RXC0))     //jeśli są do odebrania dane 
-  {
-    char uart = UDR0;            //  zapisz dane do zmiennej
-    if(uart >= 0 && uart<= 127) //TAblica ASCII
-   {        
-      show (uart);
- 
-  //Sprawdzenie, czy uart działa
-////  if (bit_is_set(UCSR0A, DOR0))
-////    {
-//      PORTD |= (1<<leds[1]);//działa na razie przy wejściu w pętlę
-////    }
-//  if(uart>40)
-//    {
-//      PORTD |= (1<<leds[2]);
-//    }
-//  if(uart=='B')
-//    {
-//      PORTD |= (1<<leds[3]);
-//    }
+//  
+//  if(bit_is_set(UCSR0A, RXC0))     //jeśli są do odebrania dane 
+//  {
+//    char uart = UDR0;//  zapisz dane do zmiennej
+//    if(uart >= 0 && uart<= 127) //TAblica ASCII
+//   {        
 //    
-//  _delay_ms(500);
-  
-  }
-  TurnOff();
+//  //Sprawdzenie, czy uart działa
+//////  if (bit_is_set(UCSR0A, DOR0))
+//////    {
+////      PORTD |= (1<<leds[1]);//działa na razie przy wejściu w pętlę
+//////    }
+////  if(uart>40)
+////    {
+////      PORTD |= (1<<leds[2]);
+////    }
+////  if(uart=='B')
+////    {
+////      PORTD |= (1<<leds[3]);
+////    }
+////    
+////  _delay_ms(500);
+//  
+//  }
+  //TurnOff();
   }
 //_delay_ms(20);
-  }
 }
