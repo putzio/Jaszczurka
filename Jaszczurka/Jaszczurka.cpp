@@ -13,7 +13,7 @@
 #define TX PD1
 
 //do uart
-#define FOSC 12000000                //czestotliwosc zegara 12MHz
+#define FOSC 16000000                //czestotliwosc zegara 16MHz nie pytajcie dlaczego nie 12MHz
 #define BAUD 9600                   //szybkosc transmisji
 #define MYUBRR (FOSC/16/BAUD)-1       //obliczenie UBRR
 
