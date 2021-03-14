@@ -19,7 +19,7 @@ void USART_Init( unsigned int ubrr)
     UBRR0H = (unsigned char)(ubrr>>8);
     UBRR0L = (unsigned char)ubrr;
     /* odblokowanie transmisji i retransmisji */
-    UCSR0B = (1<<RXEN0);//|(1<<TXEN0);
+    UCSR0B = (1<<RXEN0)|(1<<RXCIE0);//|(1<<TXEN0);
     /* Ustawienie parametrów ramki: 8data bit, 1stop bit, można tu próbować kombinować */
     UCSR0C |= (1<<UCSZ01)|(1<<UCSZ00)|(1<<USBS0);//(3<<UCSZ00)
 }
@@ -30,25 +30,13 @@ void TurnOff()
     PORTD&=~(1<<leds[i]);
 }
 
-//ISR(USART_RXC_vect)        //przerwanie od odbioru danej 
-//{ 
-//    static char a;        //zmienna pomocnicza 
-//    a = UDR;            //zapis odebranej danej 
-//    a ^= 0xff;                //operacja bitowa XOR 
-//    UDR = a;            //wysłanie danej zwrotnej 
-//}
+volatile char buf;
+volatile bool receved = false;
 
-volatile uint8_t buffer[20];
-volatile uint8_t buf=0;
-volatile uint8_t StrRxFlag=0;
-
-//ISR (USART_RX_vect) {
-//    buffer[buf]=UDR0;
-////    buf++;
-////    if(buf==RX_MAX) buf=0;
-////    StrRxFlag=1;
-//    PORTD ^= (1<<leds[4]);
-//}
+ISR (USART_RX_vect) {
+    buf=UDR0;
+    receved=true;
+}
 //Funkcja do wyświetlenia wartości chara na diodach 
 void show(char sign){
    TurnOff();
@@ -67,16 +55,22 @@ int main()
     DDRD|=(1<<leds[i]);
   }
   DDRD&=~(1<<RX);
-    
-    sei();
+  UCSR0B |= (1<<RXCIE0);
 
-//UART ze strony
-USART_Init ( MYUBRR );         //wywolanie inicjalizacji UART
-char test = 'P';//P: 0101 0000
-show(test);
+  //UART ze strony
+  USART_Init ( MYUBRR );         //wywolanie inicjalizacji UART
+  char test = 'P';//P: 0101 0000
+  show(test);
+  sei();
 while (1)
 {
-
+ if(receved)
+   {
+    show(buf);
+    receved = false;
+   }
+ _delay_ms(5);
+   
 //błąd ramki
 //  if (bit_is_set(UCSR0A, FE0))
 //    {
@@ -86,30 +80,16 @@ while (1)
 //  else
 //   PORTD&=~(1<<leds[4]);
 
-   if(bit_is_set(UCSR0A, RXC0))     //jeśli są do odebrania dane 
-   show(UDR0);
+//   if(bit_is_set(UCSR0A, RXC0))     //jeśli są do odebrania dane 
+//   PORTD |=(1<<leds[0]);
+//   else
+//   PORTD &=~(1<<leds[0]);
 //  
 //  if(bit_is_set(UCSR0A, RXC0))     //jeśli są do odebrania dane 
 //  {
 //    char uart = UDR0;//  zapisz dane do zmiennej
 //    if(uart >= 0 && uart<= 127) //TAblica ASCII
-//   {        
-//    
-//  //Sprawdzenie, czy uart działa
-//////  if (bit_is_set(UCSR0A, DOR0))
-//////    {
-////      PORTD |= (1<<leds[1]);//działa na razie przy wejściu w pętlę
-//////    }
-////  if(uart>40)
-////    {
-////      PORTD |= (1<<leds[2]);
-////    }
-////  if(uart=='B')
-////    {
-////      PORTD |= (1<<leds[3]);
-////    }
-////    
-////  _delay_ms(500);
+
 //  
 //  }
   //TurnOff();

@@ -1,119 +1,73 @@
 #include <avr/io.h>
 #include<util/delay.h>
 #include<stdint.h>
-
-#define sPin1 PB1 //przód
-#define sPin2 PB2 //środek
-#define sPin3 PB3 //tył
-
-#define led1 PD2
-#define led2 PD3
-
-#define RX PD0
-#define TX PD1
+#include<avr/interrupt.h>
 
 //do uart
 #define FOSC 16000000                //czestotliwosc zegara 16MHz nie pytajcie dlaczego nie 12MHz
 #define BAUD 9600                   //szybkosc transmisji
 #define MYUBRR (FOSC/16/BAUD)-1       //obliczenie UBRR
 
+#define ARRAY_SIZE(a) sizeof(a)/sizeof(a[0])
+
+//zmienne globalne
+const uint8_t servo[] = {PB1,PB2,PB3};//przód, środek, tył
+uint8_t pos[] ={0,90,180};
 uint8_t step=0;
-uint8_t pos1=0,pos2=90,pos3=180; 
+#define led1 PD2
+#define led2 PD3
 
 void USART_Init( unsigned int ubrr)
 {
     /* ustawienie baud */
     UBRR0H = (unsigned char)(ubrr>>8);
     UBRR0L = (unsigned char)ubrr;
-    /* odblokowanie transmisji i retransmisji */
-    UCSR0B = (1<<RXEN0)|(1<<TXEN0);
+    /* odblokowanie odbiory i przerwań do jego obsługi//i transmisji */
+    UCSR0B = (1<<RXEN0)|(1<<RXCIE0);//|(1<<TXEN0);
     /* Ustawienie parametrów ramki: 8data, 2stop bit */
     UCSR0C = (1<<USBS0)|(1<<UCSZ01)|(1<<UCSZ00);//(3<<UCSZ0), bo 3 to w dwójkowym 11, czyli na 1 jest UCSZ0 i UCSZ1
 }
 
-//ISR(USART_RXC_vect)        //przerwanie od odbioru danej 
-//{ 
-//    static char a;        //zmienna pomocnicza 
-//    a = UDR;            //zapis odebranej danej 
-//    a ^= 0xff;                //operacja bitowa XOR 
-//    UDR = a;            //wysłanie danej zwrotnej 
-//}
+volatile char buf;
+volatile bool receved = false;
 
-int main()
-{
-  DDRB |= (1<<sPin1);
-  DDRB |= (1<<sPin2);
-  DDRB |= (1<<sPin3);
+ISR (USART_RX_vect) {
+    buf=UDR0;//wpisanie nowych danych do buffera
+    receved=true;//Informacja do głównego programu, że przyszło coś nowego
+}
 
-  DDRD |= (1<< led1);
-  DDRD |= (1<< led2);
-  
+void PWM_Init(){
+  //piny servo jako wyjścia
+  for (int i =0;i<ARRAY_SIZE(servo);i++)
+    DDRB |= (1<<servo[i]);
+    
   //Fast PWM (5); Chosen output mode (non inverting)
   TCCR1A |= (1<<COM1A1)|(1<<COM1B1);
   //Waveform generation bit (fast PWM 10 bit - 1023)
   TCCR1A |= (1<<WGM10);
   TCCR1B |= (1<<WGM12);
-
   //PRESCALER 12MHz/1024=12kHz
   TCCR1B |= (1<<CS10) |(1<<CS12);
-
-
   
   //Dla Timera 2
   TCCR2A |= (1<<COM2A1);
-
   //Wybieramy Fast PWM z dużej tabeli
   TCCR2A |= (1<<WGM20)|(1<<WGM21);
-  
   //Preskaler /1024
-  TCCR2B |= ( 1<<CS22) | ( 1<<CS21) | (1<<CS20); 
-  
-  
-  
+  TCCR2B |= ( 1<<CS22) | ( 1<<CS21) | (1<<CS20);
+}
+
+int main()
+{
+  DDRD |= (1<< led1);
+  DDRD |= (1<< led2);
+  PWM_Init();//wywolanie inicjalizacji PWM
+  USART_Init ( MYUBRR );//wywolanie inicjalizacji UART
     
-  //  1:30 - 0
-  //  2:58 - 180
-    
-//    sei();
-
-////UART od Dorny
-//UDR0 = 0x67;          //ustawienie prędkości transmisji na 9600 baud
-//UCSR0C |= (1<<UCSZ01) | (1<< UCSZ00);  //ustawienie liczby bitów przesyłanej informacji na 8
-//UCSR0B |= (1<<RXEN0);     //ustawienie Atmegi jako odbiornika
-//char uart = 0;        //zmienna pomocnicza
-
-DDRD |= (1<<RX);
-PORTD |= (1<<TX);
-
-
-//UART ze strony
-USART_Init ( MYUBRR );         //wywolanie inicjalizacji UART
-char uart=0;
-bool done;
-
+  sei();
 
 while (1)
 {
-  
-  if(bit_is_set(UCSR0A, RXC0))     //jeśli są do odebrania dane 
-  {
-    uart = UDR0;            //  zapisz dane do zmiennej
-    done=false;
-    if(uart >= 49 && uart<= 127)           
-{
-  if(uart=='A')
-    PORTD |= (1<<led1);
-  else
-   // PORTD &= ~(1<<led1);
-    
-  if ((int)uart>(int) 'Z')
-    PORTD |= (1<<led1);
-  else
-   PORTD &= ~(1<<led1);
-}  
-  }
-
-
 
   _delay_ms(20);
   }
@@ -219,9 +173,8 @@ void forward()
           step = 1; 
         } 
     }
-  pos (sPin1, &pos1);  
-  pos (sPin2, &pos2);  
-  pos (sPin3, &pos3);
+    for(int i=0; i<ARRAY_SIZE(servo);i++
+      pos (servo[i], &pos[i]);  
 }
 
 void backward()
