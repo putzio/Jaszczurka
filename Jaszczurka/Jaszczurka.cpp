@@ -12,11 +12,19 @@
 
 //zmienne globalne
 const uint8_t servo[] = {PB1,PB2,PB3};//przód, środek, tył
-uint8_t pos[] ={0,90,180};
-uint8_t step=0;
-#define led1 PD2
-#define led2 PD3
+volatile uint8_t pos[] ={0,90,180};
+volatile uint8_t step=0;
 
+const uint8_t forward []  = {0,1,2,3,4};
+const uint8_t backward[]  = {0,3,2,1,4};
+const uint8_t left    []  = {0,1,2,3,4,1,2,7,8};
+const uint8_t right   []  = {0,3,4,1,2,3,4,5,6};
+
+volatile char buf;
+volatile bool receved = false;
+
+const uint8_t leds[] = {PD2,PD3,PD4,PD5,PD6};
+ 
 void USART_Init( unsigned int ubrr)
 {
     /* ustawienie baud */
@@ -27,9 +35,6 @@ void USART_Init( unsigned int ubrr)
     /* Ustawienie parametrów ramki: 8data, 2stop bit */
     UCSR0C = (1<<USBS0)|(1<<UCSZ01)|(1<<UCSZ00);//(3<<UCSZ0), bo 3 to w dwójkowym 11, czyli na 1 jest UCSZ0 i UCSZ1
 }
-
-volatile char buf;
-volatile bool receved = false;
 
 ISR (USART_RX_vect) {
     buf=UDR0;//wpisanie nowych danych do buffera
@@ -57,400 +62,147 @@ void PWM_Init(){
   TCCR2B |= ( 1<<CS22) | ( 1<<CS21) | (1<<CS20);
 }
 
+void posit (uint8_t *angle)
+{ 
+  int range [] = {8,38};//Zmierzone, żeby działały serwo od 0 do 180*
+
+  if (angle[0]>=0&&angle[0]<=180)
+    {
+       OCR1A = angle[0]*(range[1]-range[0])/180+range[0];
+    }
+
+  if (angle[1]>=0&&angle[2]<=180)
+    {
+       OCR1B = angle[1]*(range[1]-range[0])/180+range[0];
+    }
+  if (angle[2]>=0&&angle[2]<=180)
+    {
+       OCR2A = angle[2]*(range[1]-range[0])/180+range[0];
+    }
+}
+
+void move(uint8_t tab[],uint8_t size)
+{
+  
+  if(step>size)
+      step = 1;
+  
+  switch(tab[step])
+    {
+      case 0:   //zerowanie
+        {
+            pos[0]=90;
+            pos[1]=90;
+            pos[2]=90;
+            
+            step++;
+            break;        
+         }
+      case 1:   //obrót środka
+        {
+          pos[1]++;
+          if(pos[1]>=105)
+            {
+              step++;
+            }
+           break;
+        }
+      case 2:   // prawa przód, lewa tył 
+        {
+           pos[0]++;
+           pos[2]--;
+        
+          if(pos[2] <=45 && pos[0]>=135)
+            {
+              step++;
+            }
+          break;
+        }
+      case 3:   //obrót środka w drugą
+        {
+          pos[1]--;
+          
+          if(pos[1] <= 75);
+            {
+              step++;
+            }
+          break;    
+        }
+      case 4:   // lewa przód,  prawa tył 
+        {
+          pos[0]--;
+          pos[2]++;
+      
+          if(pos[0] <=45 && pos[2]>=135)
+            {
+              step++;
+            }
+          break;
+        }
+        case 5:   //zerowanie
+        {
+            pos[1]--;
+            if(pos[1]<=90)
+              step++;
+            break;     
+        }
+      case 6:   //zerowanie nóg
+        {
+            pos[0]--;
+            pos[2]++;
+            if(pos[0]<=90&&pos[2]>=90)     
+              step++;
+            break;
+        }
+      case 7:   //zerowanie
+        {
+            pos[1]++;
+            if(pos[1]>=90)
+              step++;
+            break;     
+        }
+      case 8:   //zerowanie nóg
+        {
+            pos[0]++;
+            pos[2]--;
+            if(pos[0]>=90&&pos[2]<=90)     
+             step++;
+            break;
+        }
+      default:
+        {
+          step++;
+        } 
+    }
+      posit (&pos[0]);  
+}
+
+void TurnOff()
+{
+  for(int i=0;i<ARRAY_SIZE(leds)-1;i++)
+    PORTD&=~(1<<leds[i]);
+}
+
+void CurStep()
+{
+  TurnOff();
+  PORTD |= (step<<2);
+}
 int main()
 {
-  DDRD |= (1<< led1);
-  DDRD |= (1<< led2);
+  for(int i=0;i<ARRAY_SIZE(leds);i++)
+  {
+    DDRD|=(1<<leds[i]);
+  }
   PWM_Init();//wywolanie inicjalizacji PWM
   USART_Init ( MYUBRR );//wywolanie inicjalizacji UART
-    
+  
   sei();
 
 while (1)
 {
-
-  _delay_ms(20);
+  move(left,ARRAY_SIZE(left));
+  CurStep();
+  _delay_ms(100);
   }
-}
-
-void pos (uint8_t pin, uint8_t *angle)
-{ 
-  int range [] = {8,38};//Zmierzone, żeby działały serwo od 0 do 180*
-  switch (pin)
-    {
-      case sPin1:
-        {
-          if (*angle>=0&&*angle<=180)
-          {
-             OCR1A = *angle*(range[1]-range[0])/180+range[0];
-          }
-          break;   
-        }  
-  
-      case sPin2:
-        {
-          if (*angle>=0&&*angle<=180)
-          {
-             OCR1B = *angle*(range[1]-range[0])/180+range[0];
-          }
-          break;
-        }  
-      
-      case sPin3:
-        {
-          if (*angle>=0&&*angle<=180)
-          {
-             OCR2A = *angle*(range[1]-range[0])/180+range[0];
-          }
-          break;
-        }  
-      
-      defaullt:
-        {
-        }
-    }
-}
-
-
-void forward()
-{
-  switch(step)
-    {
-      case 0:   //zerowanie
-        {
-            pos1=90;
-            pos2=90;
-            pos3=90;
-            
-            step=1;
-            break;        
-         }
-      case 1:   //obrót środka
-        {
-          pos2=105;
-          if(pos2>=105)
-            {
-              step=2;
-            }
-           break;
-        }
-      case 2:   // prawa przód, lewa tył 
-        {
-           pos1++;
-           pos3--;
-        
-          if(pos3 <=45 && pos1>=135)
-            {
-            step=3;
-            }
-          break;
-        }
-      case 3:   //obrót środka w drugą
-        {
-          pos2=75;
-          
-          if(pos2 <= 75);
-            {
-              step=4;
-            }
-          break;    
-        }
-      case 4:   // lewa przód,  prawa tył 
-        {
-          pos1--;
-          pos3++;
-      
-          if(pos1 <=45 && pos3>=135)
-            {
-              step = 1;
-            }
-          break;
-        }
-    
-      
-      default:
-        {
-          step = 1; 
-        } 
-    }
-    for(int i=0; i<ARRAY_SIZE(servo);i++
-      pos (servo[i], &pos[i]);  
-}
-
-void backward()
-{
-  switch(step)
-    {
-      case 0:   //zerowanie
-        {
-            pos1=90;
-            pos2=90;
-            pos3=90;
-            
-            step=1;
-            break;        
-         }
-      case 1:   //obrót środka
-        {
-          pos2=75;
-          if(pos2>=75)
-            {
-              step=2;
-            }
-           break;
-
-        }
-      case 2:   // prawa przód, lewa tył 
-        {
-           pos1++;
-           pos3--;
-        
-          if(pos3 <=45 && pos1>=135)
-            {
-            step=3;
-            }
-          break;
-        }
-      case 3:   //obrót środka w drugą
-        {
-      pos2=105;
-          
-          if(pos2 >= 105);
-            {
-              step=4;
-            }
-       
-          break;    
-        }
-      case 4:   // lewa przód,  prawa tył 
-        {
-          pos1--;
-          pos3++;
-      
-          if(pos1 <=45 && pos3>=135)
-            {
-              step = 1;
-            }
-          break;
-        }
-    
-      
-      default:
-        {
-          step = 1; 
-        } 
-    }
-  pos (sPin1, &pos1);  
-  pos (sPin2, &pos2);  
-  pos (sPin3, &pos3);
-}
-
-
-
-
-
-
-
-
-
-void links( )
-{
-  switch(step)
-    {
-      case 0:   //zerowanie
-        {
-            pos1=90;
-            pos2=90;
-            pos3=90;
-            
-            step=1;
-            break;        
-         }
-      case 1:   //obrót środka w prawo
-        {
-          pos2++;
-          if(pos2>=105)
-            {
-              step=2;
-            }
-           break;
-
-        }
-      case 2:   // prawa przednia noga, lewa tylnia noga 
-        {
-           pos1++;
-           pos3--;
-        
-          if(pos3 <=45 && pos1>=135)
-            {
-            step=3;
-            }
-          break;
-        }
-      case 3:   //obrót środka w lewo
-        {
-      pos2++;
-          
-          if(pos2<= 75);
-            {
-              step=4;
-            }
-       
-          break;    
-        }
-      case 4:   // lewa noga przednia,  prawa noga tylnia  
-        {
-          pos1--;
-          pos3++;
-      
-          if(pos1 <=45 && pos3>=135)
-            {
-              step = 5;
-            }
-          break;
-        }
-
- case 5:   //obrót środka w prawo
-        {
-          pos2++;
-          if(pos2>=105)
-            {
-              step=6;
-            }
-           break;
-
-        }
-      case 6:   // prawa noga przednia, lewa noga tylnia 
-        {
-           pos1++;
-           pos3--;
-        
-          if(pos3 <=45 && pos1>=135)
-            {
-            step=7;
-            }
-          break;
-        }
-  case 7:   //zerowanie
-        {
-  pos2--;
-if(pos2<=90)
-            step=0;
-            break;
-        }     
-  case 8:   //zerowanie nóg
-        {
-            pos1--;
-            pos3++;
-            if(pos1<=90&&pos3<=90)     
-            step=0;
-  break;
- }
-
-
-  pos (sPin1, &pos1);  
-  pos (sPin2, &pos2);  
-  pos (sPin3, &pos3);
-    }
-}
-
-void rechts( )
-{
-  switch(step)
-    {
-      case 0:   //zerowanie
-        {
-            pos1=90;
-            pos2=90;
-            pos3=90;
-            
-            step=1;
-            break;        
-         }
-      case 1:   //obrót środka wlewo
-        {
-          pos2--;
-          if(pos2<=75)
-            {
-              step=2;
-            }
-           break;
-
-        }
-      case 2:   // prawa tylnia noga, lewa przednia noga 
-        {
-           pos1--;
-           pos3++;
-        
-          if(pos3 >=135 && pos1<=45)
-            {
-            step=3;
-            }
-          break;
-        }
-      case 3:   //obrót środka w prawo
-        {
-      pos2++;
-          if(pos2>= 105);
-            {
-              step=4;
-            }
-       
-          break;    
-        }
-      case 4:   // lewa noga tylna,  prawa noga przednia 
-        {
-          pos1++;
-          pos3--;
-      
-          if(pos3 <=45 && pos1>=135)
-            {
-              step = 5;
-            }
-          break;
-        }
-
- case 5:   //obrót środka w lewo
-        {
-          pos2--;
-          if(pos2<=75)
-            {
-              step=6;
-            }
-           break;
-
-        }
-      case 6:   // lewa noga przednia, prawa noga tylna 
-        {
-           pos1--;
-           pos3++;
-        
-          if(pos1 <=45 && pos3>=135)
-            {
-            step=7;
-            }
-          break;
-        }
-  case 7:   //zerowanie
-        {
-            pos2++;
-            if(pos2>=90)
-            step=0;
-            break;     
-        }
-  case 8:   //zerowanie nóg
-        {
-            pos1++;
-            pos3--;
-            if(pos1>=90&&pos3<=90)     
-            step=0;
-  break;
- }
-
-
-  pos (sPin1, &pos1);  
-  pos (sPin2, &pos2);  
-  pos (sPin3, &pos3);
-
-}
 }
