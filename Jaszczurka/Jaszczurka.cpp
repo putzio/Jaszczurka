@@ -4,7 +4,7 @@
 #include<avr/interrupt.h>
 
 //do uart
-#define FOSC 16000000                //czestotliwosc zegara 16MHz nie pytajcie dlaczego nie 12MHz
+#define FOSC 16000000                //czestotliwosc zegara 16MHz, bo to ten drugi, którego nie widać
 #define BAUD 9600                   //szybkosc transmisji
 #define MYUBRR (FOSC/16/BAUD)-1       //obliczenie UBRR
 
