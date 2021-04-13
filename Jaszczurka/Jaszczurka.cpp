@@ -31,7 +31,7 @@ volatile bool received = false;  //flaga do informowania o otrzymaniu nowych dan
 const uint8_t leds[] = {PD2,PD3,PD4,PD5,PD6};//tablica ledów
 
 //TIMER0
-#define time 100 //ms
+#define time 20 //ms
 #define inttime FOSC*time/1000/1024 //liczba, którą normalnie wpisalibyćmy do rejestru OCR0A, jeżeli nie byłby za mały//time/1000 -> s (Hz)
 #define intnumber inttime/256 //liczba wykonywanych przerwań znim zostanie urucho iona właściwa funkcja
 
@@ -59,6 +59,7 @@ void USART_Init( unsigned int ubrr);
 //funkcja inicjalizacja PWM
 void PWM_Init();
 
+//Funkcja Inicjalizująca Timer 0, który odpowiada za aktualizowanie pozycji jaszczurki
 void Timer0Init();
 
 //funkcja ustawiająca serva w żądanej pozycji
@@ -91,6 +92,7 @@ while (1)
   if(t>=intnumber)
     {
       t=0;
+     // CurStep();
       move (mtab,mtab[9]);//funkcja ustawiająca odpowiedni kąt i poruszająca servo za pomocą posit()
     }
   
@@ -105,9 +107,9 @@ while (1)
 
 void Timer0Init()
 {
-  TCCR0A = (1<<WGM01);
-  TCCR0B = (5<<CS00);
-  OCR0A = (inttime+intnumber/2)/intnumber;//+intnumber/2 poprawne zaokrąglenie
+  TCCR0A = (1<<WGM01);  //CTC mode
+  TCCR0B = (5<<CS00);   //prescaler 1024
+  OCR0A = 255;// max = 256
   TIMSK0 |= (1<<OCIE0A);
 }
 
@@ -154,9 +156,9 @@ void posit (uint8_t *angle)
        OCR1A = angle[0]*(range[1]-range[0])/180+range[0];
     }
 
-  if (angle[1]>=0&&angle[2]<=180)//drugie servo
+  if (angle[1]>=0&&angle[1]<=180)//drugie servo
     {
-       OCR1B = angle[1]*(range[1]-range[0])/180+range[0];
+       OCR1B = angle[1]*(range[1]-range[0])/180 + range[0];
     }
   if (angle[2]>=0&&angle[2]<=180)//trzecie servo
     {
@@ -178,8 +180,9 @@ void move(uint8_t tab[],uint8_t size)
             pos[0]=90;
             pos[1]=90;
             pos[2]=90;
+            TurnOff();
             
-            step++;
+            step++;            
             break;        
          }
       case 1:   //obrót środka
@@ -189,6 +192,7 @@ void move(uint8_t tab[],uint8_t size)
             {
               step++;
             }
+            PORTD |=(1<<leds[1]);
            break;
         }
       case 2:   // prawa przód, lewa tył 
@@ -196,7 +200,7 @@ void move(uint8_t tab[],uint8_t size)
            pos[0]++;
            pos[2]--;
         
-          if(pos[2] <=45 && pos[0]>=135)
+          if(pos[2] <=60 && pos[0]>=120)
             {
               step++;
             }
@@ -204,9 +208,10 @@ void move(uint8_t tab[],uint8_t size)
         }
       case 3:   //obrót środka w drugą
         {
+          TurnOff();
           pos[1]--;
           
-          if(pos[1] <= 75);
+          if(pos[1] <= 75)
             {
               step++;
             }
@@ -217,7 +222,7 @@ void move(uint8_t tab[],uint8_t size)
           pos[0]--;
           pos[2]++;
       
-          if(pos[0] <=45 && pos[2]>=135)
+          if(pos[0] <=60 && pos[2]>=120)
             {
               step++;
             }
