@@ -82,8 +82,6 @@
 <hole x="2.54" y="55.88" drill="2.2"/>
 <hole x="27.94" y="55.88" drill="2.2"/>
 <hole x="27.94" y="2.54" drill="2.2"/>
-<dimension x1="30.48" y1="0" x2="30.48" y2="58.42" x3="41.91" y3="29.21" textsize="1.778" layer="1"/>
-<dimension x1="30.48" y1="58.42" x2="0" y2="58.42" x3="15.24" y3="69.85" textsize="1.778" layer="1"/>
 </plain>
 <libraries>
 <library name="rcl" urn="urn:adsk.eagle:library:334">

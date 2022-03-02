@@ -1858,10 +1858,10 @@ design rules under a new name.</description>
 <attribute name="SPICEPREFIX" value="R" x="4.318" y="9.144" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="VALUE" x="3.8354" y="10.7696" size="0.9906" layer="27" ratio="10" rot="R270"/>
 </element>
-<element name="R3" library="rcl" library_urn="urn:adsk.eagle:library:334" package="0204/5" package3d_urn="urn:adsk.eagle:package:23488/1" value="" x="3.81" y="17.526" smashed="yes" rot="R270">
-<attribute name="POPULARITY" value="35" x="3.81" y="17.526" size="1.778" layer="27" rot="R270" display="off"/>
-<attribute name="SPICEPREFIX" value="R" x="3.81" y="17.526" size="1.778" layer="27" rot="R270" display="off"/>
-<attribute name="VALUE" x="3.3274" y="19.1516" size="0.9906" layer="27" ratio="10" rot="R270"/>
+<element name="R3" library="rcl" library_urn="urn:adsk.eagle:library:334" package="0204/5" package3d_urn="urn:adsk.eagle:package:23488/1" value="" x="2.54" y="26.416" smashed="yes" rot="R270">
+<attribute name="POPULARITY" value="35" x="2.54" y="26.416" size="1.778" layer="27" rot="R270" display="off"/>
+<attribute name="SPICEPREFIX" value="R" x="2.54" y="26.416" size="1.778" layer="27" rot="R270" display="off"/>
+<attribute name="VALUE" x="2.0574" y="28.0416" size="0.9906" layer="27" ratio="10" rot="R270"/>
 </element>
 <element name="C5" library="rcl" library_urn="urn:adsk.eagle:library:334" package="C050-024X044" package3d_urn="urn:adsk.eagle:package:23643/1" value="" x="3.81" y="40.64" smashed="yes" rot="R90">
 <attribute name="NAME" x="2.413" y="39.751" size="1.27" layer="25" ratio="10" rot="R90"/>
@@ -1869,16 +1869,16 @@ design rules under a new name.</description>
 <attribute name="SPICEPREFIX" value="C" x="3.81" y="40.64" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="VALUE" x="6.477" y="38.481" size="1.27" layer="27" ratio="10" rot="R90"/>
 </element>
-<element name="T1" library="transistor" library_urn="urn:adsk.eagle:library:402" package="TO92" package3d_urn="urn:adsk.eagle:package:28523/2" value="BC547" x="3.683" y="24.003" smashed="yes" rot="R90">
-<attribute name="NAME" x="3.048" y="27.178" size="1.27" layer="25" ratio="10" rot="R90"/>
-<attribute name="POPULARITY" value="43" x="3.683" y="24.003" size="1.778" layer="27" rot="R90" display="off"/>
-<attribute name="VALUE" x="4.953" y="27.178" size="1.27" layer="27" ratio="10" rot="R90"/>
+<element name="R4" library="rcl" library_urn="urn:adsk.eagle:library:334" package="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="" x="1.778" y="11.684" smashed="yes" rot="R91.1">
+<attribute name="NAME" x="0.531603125" y="9.11960625" size="0.9906" layer="25" ratio="10" rot="R91.1"/>
+<attribute name="POPULARITY" value="79" x="1.778" y="11.684" size="1.778" layer="27" rot="R91.1" display="off"/>
+<attribute name="SPICEPREFIX" value="R" x="1.778" y="11.684" size="1.778" layer="27" rot="R91.1" display="off"/>
+<attribute name="VALUE" x="2.291721875" y="10.067965625" size="0.9906" layer="27" ratio="10" rot="R91.1"/>
 </element>
-<element name="R4" library="rcl" library_urn="urn:adsk.eagle:library:334" package="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="" x="1.778" y="14.224" smashed="yes" rot="R91.1">
-<attribute name="NAME" x="0.531603125" y="11.65960625" size="0.9906" layer="25" ratio="10" rot="R91.1"/>
-<attribute name="POPULARITY" value="79" x="1.778" y="14.224" size="1.778" layer="27" rot="R91.1" display="off"/>
-<attribute name="SPICEPREFIX" value="R" x="1.778" y="14.224" size="1.778" layer="27" rot="R91.1" display="off"/>
-<attribute name="VALUE" x="2.291721875" y="12.607965625" size="0.9906" layer="27" ratio="10" rot="R91.1"/>
+<element name="T1" library="transistor" library_urn="urn:adsk.eagle:library:402" package="TO92" package3d_urn="urn:adsk.eagle:package:28523/2" value="BC547" x="3.683" y="18.923" smashed="yes" rot="R90">
+<attribute name="NAME" x="3.048" y="22.098" size="1.27" layer="25" ratio="10" rot="R90"/>
+<attribute name="POPULARITY" value="43" x="3.683" y="18.923" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="VALUE" x="4.953" y="22.098" size="1.27" layer="27" ratio="10" rot="R90"/>
 </element>
 </elements>
 <signals>
@@ -1902,10 +1902,9 @@ design rules under a new name.</description>
 </polygon>
 <contactref element="IC1" pad="22"/>
 <contactref element="C5" pad="2"/>
-<contactref element="T1" pad="1"/>
 <wire x1="6.731" y1="23.241" x2="6.59901875" y2="23.241" width="1.016" layer="16"/>
-<wire x1="6.59901875" y1="23.241" x2="4.56701875" y2="25.273" width="1.016" layer="16"/>
-<wire x1="4.56701875" y1="25.273" x2="3.683" y2="25.273" width="1.016" layer="16"/>
+<contactref element="R3" pad="1"/>
+<wire x1="6.59901875" y1="23.241" x2="2.54" y2="28.956" width="0" layer="19" extent="16-16"/>
 </signal>
 <signal name="AVCC">
 <contactref element="IC1" pad="20"/>
@@ -2036,15 +2035,14 @@ design rules under a new name.</description>
 <wire x1="16.129" y1="8.001" x2="16.891" y2="7.239" width="1.016" layer="16"/>
 </signal>
 <signal name="VCCREF">
-<contactref element="R2" pad="1"/>
-<contactref element="R3" pad="2"/>
 <contactref element="IC1" pad="23"/>
-<wire x1="3.81" y1="14.986" x2="3.81" y2="13.462" width="1.016" layer="16"/>
-<wire x1="3.81" y1="13.462" x2="4.318" y2="12.954" width="1.016" layer="16"/>
-<wire x1="6.731" y1="20.701" x2="5.6134" y2="19.5834" width="1.016" layer="16"/>
-<wire x1="5.6134" y1="19.5834" x2="5.48141875" y2="19.5834" width="1.016" layer="16"/>
-<wire x1="5.48141875" y1="19.5834" x2="3.81" y2="17.91198125" width="1.016" layer="16"/>
-<wire x1="3.81" y1="17.91198125" x2="3.81" y2="14.986" width="1.016" layer="16"/>
+<contactref element="R3" pad="2"/>
+<contactref element="T1" pad="1"/>
+<wire x1="3.683" y1="20.193" x2="3.81" y2="20.32" width="0.6096" layer="16"/>
+<wire x1="3.81" y1="20.32" x2="4.191" y2="20.701" width="0.6096" layer="16"/>
+<wire x1="4.191" y1="20.701" x2="6.731" y2="20.701" width="0.6096" layer="16"/>
+<wire x1="2.54" y1="23.876" x2="3.81" y2="22.606" width="0.6096" layer="16"/>
+<wire x1="3.81" y1="22.606" x2="3.81" y2="20.32" width="0.6096" layer="16"/>
 </signal>
 <signal name="N$2">
 <contactref element="IC1" pad="21"/>
@@ -2053,24 +2051,24 @@ design rules under a new name.</description>
 <wire x1="6.731" y1="25.781" x2="4.191" y2="28.321" width="0.8128" layer="16"/>
 <wire x1="4.191" y1="37.719" x2="3.81" y2="38.1" width="0.8128" layer="16"/>
 </signal>
-<signal name="N$4">
-<contactref element="R3" pad="1"/>
-<contactref element="T1" pad="3"/>
-<wire x1="3.683" y1="22.733" x2="3.683" y2="20.447" width="1.016" layer="16"/>
-<wire x1="3.683" y1="20.447" x2="3.81" y2="20.066" width="1.016" layer="16"/>
-</signal>
 <signal name="CHECK_VIN">
 <contactref element="R4" pad="1"/>
 <contactref element="IC1" pad="27"/>
-<wire x1="6.731" y1="10.541" x2="6.6047" y2="10.4147" width="1.016" layer="16"/>
-<wire x1="6.6047" y1="10.4147" x2="1.851140625" y2="10.4147" width="1.016" layer="16"/>
+<wire x1="6.731" y1="10.541" x2="4.191" y2="10.541" width="1.016" layer="16"/>
+<wire x1="4.191" y1="10.541" x2="1.851140625" y2="8.201140625" width="1.016" layer="16"/>
+<wire x1="1.851140625" y1="8.201140625" x2="1.851140625" y2="7.8747" width="1.016" layer="16"/>
+</signal>
+<signal name="N$4">
+<contactref element="R4" pad="2"/>
+<contactref element="T1" pad="2"/>
+<wire x1="1.70485625" y1="15.493296875" x2="1.70485625" y2="18.84985625" width="0.6096" layer="16"/>
+<wire x1="1.70485625" y1="18.84985625" x2="1.778" y2="18.923" width="0.6096" layer="16"/>
 </signal>
 <signal name="N$3">
-<contactref element="T1" pad="2"/>
-<contactref element="R4" pad="2"/>
-<wire x1="1.70485625" y1="22.27885625" x2="1.70485625" y2="18.033296875" width="1.016" layer="16"/>
-<wire x1="1.778" y1="24.003" x2="1.778" y2="22.352" width="1.016" layer="16"/>
-<wire x1="1.778" y1="22.352" x2="1.70485625" y2="22.27885625" width="1.016" layer="16"/>
+<contactref element="T1" pad="3"/>
+<contactref element="R2" pad="1"/>
+<wire x1="3.683" y1="17.653" x2="4.318" y2="17.018" width="0.6096" layer="16"/>
+<wire x1="4.318" y1="17.018" x2="4.318" y2="12.954" width="0.6096" layer="16"/>
 </signal>
 </signals>
 <mfgpreviewcolors>

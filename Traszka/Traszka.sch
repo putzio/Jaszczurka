@@ -9456,10 +9456,10 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <part name="R3" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/5" package3d_urn="urn:adsk.eagle:package:23488/1"/>
 <part name="C5" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="050-024X044" package3d_urn="urn:adsk.eagle:package:23643/1"/>
 <part name="GND11" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
-<part name="T1" library="transistor" library_urn="urn:adsk.eagle:library:402" deviceset="BC547" device="" package3d_urn="urn:adsk.eagle:package:28523/2"/>
 <part name="GND12" library="supply1" library_urn="urn:adsk.eagle:library:371" deviceset="GND" device=""/>
 <part name="SUPPLY10" library="supply2" library_urn="urn:adsk.eagle:library:372" deviceset="+9V" device=""/>
 <part name="R4" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2"/>
+<part name="T1" library="transistor" library_urn="urn:adsk.eagle:library:402" deviceset="BC547" device="" package3d_urn="urn:adsk.eagle:package:28523/2"/>
 </parts>
 <sheets>
 <sheet>
@@ -9583,9 +9583,9 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <attribute name="NAME" x="-19.2786" y="46.99" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="-14.478" y="46.99" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="R3" gate="G$1" x="-17.78" y="38.1" smashed="yes" rot="R90" grouprefs="BATTERY_CHECK">
-<attribute name="NAME" x="-19.2786" y="34.29" size="1.778" layer="95" rot="R90"/>
-<attribute name="VALUE" x="-14.478" y="34.29" size="1.778" layer="96" rot="R90"/>
+<instance part="R3" gate="G$1" x="-17.78" y="25.4" smashed="yes" rot="R90" grouprefs="BATTERY_CHECK">
+<attribute name="NAME" x="-19.2786" y="21.59" size="1.778" layer="95" rot="R90"/>
+<attribute name="VALUE" x="-14.478" y="21.59" size="1.778" layer="96" rot="R90"/>
 </instance>
 <instance part="C5" gate="G$1" x="71.12" y="50.8" smashed="yes" rot="R270" grouprefs="ARDUINO">
 <attribute name="NAME" x="71.501" y="49.276" size="1.778" layer="95" rot="R270"/>
@@ -9594,19 +9594,19 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <instance part="GND11" gate="1" x="66.04" y="45.72" smashed="yes" grouprefs="ARDUINO">
 <attribute name="VALUE" x="63.5" y="43.18" size="1.778" layer="96"/>
 </instance>
-<instance part="T1" gate="G$1" x="-20.32" y="27.94" smashed="yes" grouprefs="BATTERY_CHECK">
-<attribute name="NAME" x="-30.48" y="35.56" size="1.778" layer="95"/>
-<attribute name="VALUE" x="-30.48" y="33.02" size="1.778" layer="96"/>
-</instance>
 <instance part="GND12" gate="1" x="-17.78" y="17.78" smashed="yes" grouprefs="BATTERY_CHECK">
 <attribute name="VALUE" x="-20.32" y="15.24" size="1.778" layer="96"/>
 </instance>
 <instance part="SUPPLY10" gate="G$1" x="-17.78" y="58.42" smashed="yes" grouprefs="BATTERY_CHECK">
 <attribute name="VALUE" x="-19.685" y="61.595" size="1.778" layer="96"/>
 </instance>
-<instance part="R4" gate="G$1" x="-27.94" y="27.94" smashed="yes" grouprefs="BATTERY_CHECK">
-<attribute name="NAME" x="-31.75" y="29.4386" size="1.778" layer="95"/>
-<attribute name="VALUE" x="-31.75" y="24.638" size="1.778" layer="96"/>
+<instance part="R4" gate="G$1" x="-27.94" y="38.1" smashed="yes" grouprefs="BATTERY_CHECK">
+<attribute name="NAME" x="-31.75" y="39.5986" size="1.778" layer="95"/>
+<attribute name="VALUE" x="-31.75" y="34.798" size="1.778" layer="96"/>
+</instance>
+<instance part="T1" gate="G$1" x="-20.32" y="38.1" smashed="yes" grouprefs="BATTERY_CHECK">
+<attribute name="NAME" x="-30.48" y="45.72" size="1.778" layer="95"/>
+<attribute name="VALUE" x="-30.48" y="43.18" size="1.778" layer="96"/>
 </instance>
 </instances>
 <busses>
@@ -9675,8 +9675,7 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 </segment>
 <segment>
 <pinref part="GND12" gate="1" pin="GND"/>
-<pinref part="T1" gate="G$1" pin="E"/>
-<wire x1="-17.78" y1="20.32" x2="-17.78" y2="22.86" width="0.1524" layer="91" grouprefs="BATTERY_CHECK"/>
+<pinref part="R3" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="+5V" class="0">
@@ -9834,15 +9833,15 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 </net>
 <net name="VCCREF" class="0">
 <segment>
-<pinref part="R2" gate="G$1" pin="1"/>
-<pinref part="R3" gate="G$1" pin="2"/>
-<label x="-17.78" y="45.72" size="1.778" layer="95" xref="yes" grouprefs="BATTERY_CHECK"/>
-<wire x1="-17.78" y1="45.72" x2="-17.78" y2="43.18" width="0.1524" layer="91" grouprefs="BATTERY_CHECK"/>
-</segment>
-<segment>
 <pinref part="IC1" gate="G$1" pin="PC0(ADC0)"/>
 <wire x1="124.46" y1="60.96" x2="127" y2="60.96" width="0.1524" layer="91" grouprefs="ARDUINO"/>
 <label x="127" y="60.96" size="1.778" layer="95" xref="yes" grouprefs="ARDUINO"/>
+</segment>
+<segment>
+<pinref part="R3" gate="G$1" pin="2"/>
+<pinref part="T1" gate="G$1" pin="E"/>
+<wire x1="-17.78" y1="30.48" x2="-17.78" y2="33.02" width="0.1524" layer="91" grouprefs="BATTERY_CHECK"/>
+<label x="-17.78" y="33.02" size="1.778" layer="95" xref="yes" grouprefs="BATTERY_CHECK"/>
 </segment>
 </net>
 <net name="N$2" class="0">
@@ -9852,16 +9851,10 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <wire x1="73.66" y1="50.8" x2="76.2" y2="53.34" width="0.1524" layer="91" grouprefs="ARDUINO"/>
 </segment>
 </net>
-<net name="N$4" class="0">
-<segment>
-<pinref part="R3" gate="G$1" pin="1"/>
-<pinref part="T1" gate="G$1" pin="C"/>
-</segment>
-</net>
 <net name="CHECK_VIN" class="0">
 <segment>
-<label x="-35.56" y="27.94" size="1.778" layer="95" rot="R90" xref="yes" grouprefs="BATTERY_CHECK"/>
-<wire x1="-33.02" y1="27.94" x2="-35.56" y2="27.94" width="0.1524" layer="91" grouprefs="BATTERY_CHECK"/>
+<label x="-35.56" y="38.1" size="1.778" layer="95" rot="R90" xref="yes" grouprefs="BATTERY_CHECK"/>
+<wire x1="-33.02" y1="38.1" x2="-35.56" y2="38.1" width="0.1524" layer="91" grouprefs="BATTERY_CHECK"/>
 <pinref part="R4" gate="G$1" pin="1"/>
 </segment>
 <segment>
@@ -9870,10 +9863,17 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <wire x1="127" y1="50.8" x2="124.46" y2="50.8" width="0.1524" layer="91" grouprefs="ARDUINO"/>
 </segment>
 </net>
+<net name="N$4" class="0">
+<segment>
+<pinref part="R4" gate="G$1" pin="2"/>
+<pinref part="T1" gate="G$1" pin="B"/>
+</segment>
+</net>
 <net name="N$3" class="0">
 <segment>
-<pinref part="T1" gate="G$1" pin="B"/>
-<pinref part="R4" gate="G$1" pin="2"/>
+<pinref part="T1" gate="G$1" pin="C"/>
+<pinref part="R2" gate="G$1" pin="1"/>
+<wire x1="-17.78" y1="43.18" x2="-17.78" y2="45.72" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
