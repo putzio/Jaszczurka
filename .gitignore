@@ -10,5 +10,6 @@
 *.srec
 .DS_STORE
 *.b#*
+*.s#*
 */.vs/
 TEST/
