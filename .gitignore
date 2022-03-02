@@ -9,3 +9,6 @@
 *.map
 *.srec
 .DS_STORE
+*.b#*
+*/.vs/
+TEST/
