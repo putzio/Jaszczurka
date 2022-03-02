@@ -11,6 +11,13 @@
 #define MYUBRR ((FOSC)/16/BAUD)-1       //obliczenie UBRR
 
 #define ARRAY_SIZE(a) sizeof(a)/sizeof(a[0])  //makro zwracaj¹ce rozmiar tablicy
+//Zmienne odbierane z modu³u bt do zmiany trybu poruszania siê robota:
+#define  FORWARD_MESSAGE 'f'
+#define  BACK_MESSAGE 'b'
+#define  LEFT_MESSAGE 'l'
+#define  RIGHT_MESSAGE 'r'
+#define  STOP_MESSAGE 's'
+
 
 //zmienne globalne
 const uint8_t servo[] = {PB1,PB2,PB3};  //przód, œrodek, ty³
@@ -65,7 +72,7 @@ void PWM_Init();
 void Timer0Init();
 
 //funkcja ustawiaj¹ca serva w ¿¹danej pozycji
-void posit (uint8_t *angle);
+void posit (volatile uint8_t *angle);
 
 //funkcja ustawiaj¹ca odpowiedni k¹t i poruszaj¹ca servo za pomoc¹ posit()
 void move(uint8_t tab[],uint8_t size);
@@ -149,7 +156,7 @@ void PWM_Init(){
 }
 
 //funkcja ustawiaj¹ca serva w ¿¹danej pozycji
-void posit (uint8_t *angle)
+void posit (volatile uint8_t *angle)
 {
 	int range [] = {8,38};//Zmierzone, ¿eby dzia³a³y serwo od 0 do 180*
 
@@ -260,12 +267,17 @@ void move(uint8_t tab[],uint8_t size)
 			step++;
 			break;
 		}
+		case 9:
+		{
+			_delay_ms(100);//do nothing
+			break;
+		}
 		default:
 		{
 			step++;
 		}
 	}
-	posit (&pos[0]);
+	posit (pos);
 }
 
 void ChangeMoveType(char c)
@@ -273,7 +285,7 @@ void ChangeMoveType(char c)
 	step = 0;
 	switch (c)//przypisanie odpowiednich wartoœci do tabeli mtab[] w zale¿noœci od otrzymanych danych
 	{
-		case 'f':
+		case FORWARD_MESSAGE:
 		{
 			for (int i = 0;i<ARRAY_SIZE(forward);i++)
 			mtab[i]=forward[i];
@@ -281,7 +293,7 @@ void ChangeMoveType(char c)
 			PORTD |=(1<<leds[1]);
 			break;
 		}
-		case 'b':
+		case BACK_MESSAGE:
 		{
 			for (int i = 0;i<ARRAY_SIZE(backward);i++)
 			mtab[i]=backward[i];
@@ -289,7 +301,7 @@ void ChangeMoveType(char c)
 			PORTD |=(1<<leds[2]);
 			break;
 		}
-		case 'l':
+		case LEFT_MESSAGE:
 		{
 			for (int i = 0;i<ARRAY_SIZE(left);i++)
 			mtab[i]=left[i];
@@ -297,13 +309,20 @@ void ChangeMoveType(char c)
 			PORTD |=(1<<leds[3]);
 			break;
 		}
-		case 'r':
+		case RIGHT_MESSAGE:
 		{
 			for (int i = 0;i<ARRAY_SIZE(right);i++)
 			mtab[i]=right[i];
 			mtab[9] = ARRAY_SIZE(right);
 			PORTD |=(1<<leds[4]);
 			break;
+		}
+		case STOP_MESSAGE:
+		{
+			for(int i = 0; i < ARRAY_SIZE(right); i++)
+			{
+				mtab[i] = 9;//all values set to 9 -> the robot will not move				
+			}
 		}
 		default:
 		{

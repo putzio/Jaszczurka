@@ -13,3 +13,5 @@
 *.s#*
 */.vs/
 TEST/
+*Debug/
+*Release/
